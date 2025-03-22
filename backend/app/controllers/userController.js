@@ -14,7 +14,28 @@ export const registerUser = async (req, res, next) => {
 export const loginUser = async (req, res, next) => {
   try {
     const newUser = await userServices.loginUser(req.body);
-    res.status(201).json(newUser);
+    req.session.regenerate(function (err) {
+      if (err) next(err);
+      req.session.user = newUser;
+      req.session.save(function (err) {
+        if (err) return next(err);
+        res.status(201).json(newUser);
+      });
+    });
+  } catch (error) {
+    next(createError(error.message, 400));
+  }
+};
+
+export const logoutUser = (req, res, next) => {
+  try {
+    // Destroy the session on logout
+    req.session.destroy((err) => {
+      if (err) {
+        return next(createError("Failed to destroy session", 500));
+      }
+      res.status(200).json({ message: "Logged out successfully" });
+    });
   } catch (error) {
     next(createError(error.message, 400));
   }
@@ -32,6 +53,7 @@ export const getUsers = async (req, res, next) => {
 const userController = {
   registerUser,
   loginUser,
+  logoutUser,
   getUsers,
 };
 export default userController;

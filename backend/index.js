@@ -5,6 +5,7 @@ import errorHandler from "./app/middleware/errorHandler.js";
 import userRoutes from "./app/routes/userRoute.js";
 import { connectDB } from "./server.js";
 import createError from "./app/utils/createError.js";
+import session from "express-session";
 
 // Load environment variables
 dotenv.config();
@@ -15,6 +16,15 @@ const port = process.env.PORT;
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(
+  session({
+    name: "collaboarationSession",
+    secret: "keyboard cat",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false, maxAge: 60 * 1000 },
+  })
+);
 
 // Connect to database
 connectDB();
