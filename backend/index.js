@@ -7,7 +7,7 @@ import taskRoutes from "./app/routes/taskRoute.js";
 import { connectDB } from "./server.js";
 import createError from "./app/utils/createError.js";
 import session from "express-session";
-import { connectRedis } from "./redis.js";
+import { connectRedis, redisStore } from "./redis.js";
 
 // Load environment variables
 dotenv.config();
@@ -20,11 +20,12 @@ app.use(cors());
 app.use(express.json());
 app.use(
   session({
+    store: redisStore,
     name: "collaboarationSession",
     secret: "keyboard cat",
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false, maxAge: 60 * 1000 },
+    cookie: { secure: false, maxAge: 5 * 60 * 1000 },
   })
 );
 
