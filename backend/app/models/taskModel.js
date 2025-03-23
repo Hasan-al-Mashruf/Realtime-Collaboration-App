@@ -9,6 +9,7 @@ const taskSchema = new mongoose.Schema(
       enum: ["pending", "progress", "completed"],
       default: "pending",
     },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Reference to User
   },
   { timestamps: true }
 );
