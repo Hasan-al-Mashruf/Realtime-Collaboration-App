@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import errorHandler from "./app/middleware/errorHandler.js";
 import userRoutes from "./app/routes/userRoute.js";
+import taskRoutes from "./app/routes/taskRoute.js";
 import { connectDB } from "./server.js";
 import createError from "./app/utils/createError.js";
 import session from "express-session";
@@ -31,6 +32,7 @@ connectDB();
 
 // Routes
 app.use("/api/users", userRoutes);
+app.use("/api/tasks", taskRoutes);
 
 app.get("/", (req, res, next) => {
   res.status(200).json({ message: "hello world" });
