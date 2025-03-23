@@ -1,12 +1,12 @@
 import Task from "../models/taskModel.js";
 import User from "../models/userModel.js";
 
-const createTask = async (payload, user) => {
-  const existingUser = await User.findById(user._id);
+const createTask = async (payload, userId) => {
+  const existingUser = await User.findById(userId);
   if (!existingUser) throw new Error("User not found");
 
   // Create the task
-  const task = await Task.create({ ...payload, user });
+  const task = await Task.create({ ...payload, user: userId });
 
   return task;
 };
@@ -15,16 +15,12 @@ const getTasks = async () => {
   return await Task.find().populate("user");
 };
 
-const getTaskById = async (id) => {
-  return await Task.findById(id);
-};
-
-const getTaskByUserId = async (taskId, user) => {
-  const existingUser = await User.findById(user._id);
+const getTaskByUserId = async (taskId, userId) => {
+  const existingUser = await User.findById(userId);
   if (!existingUser) throw new Error("User not found");
 
   // Find the task that belongs to the user
-  const task = await Task.findOne({ _id: taskId, user: user._id }).populate(
+  const task = await Task.findOne({ _id: taskId, user: userId }).populate(
     "user"
   );
   if (!task) throw new Error("Task not found ");
@@ -42,7 +38,6 @@ const deleteTask = async (id) => {
 const taskServices = {
   createTask,
   getTasks,
-  getTaskById,
   getTaskByUserId,
   updateTask,
   deleteTask,

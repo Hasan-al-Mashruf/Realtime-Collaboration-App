@@ -7,6 +7,7 @@ import taskRoutes from "./app/routes/taskRoute.js";
 import { connectDB } from "./server.js";
 import createError from "./app/utils/createError.js";
 import session from "express-session";
+import { connectRedis } from "./redis.js";
 
 // Load environment variables
 dotenv.config();
@@ -29,6 +30,9 @@ app.use(
 
 // Connect to database
 connectDB();
+
+// Connect to caching server
+connectRedis();
 
 // Routes
 app.use("/api/users", userRoutes);
