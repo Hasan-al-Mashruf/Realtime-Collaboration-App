@@ -8,6 +8,9 @@ import { connectDB } from "./server.js";
 import createError from "./app/utils/createError.js";
 import session from "express-session";
 import { connectRedis, redisStore } from "./redis.js";
+import { createServer } from "http";
+import { Server } from "socket.io";
+import { io as socketClient } from "socket.io-client"; // Import socket.io-client to simulate a client
 
 // Load environment variables
 dotenv.config();
@@ -35,6 +38,14 @@ connectDB();
 // Connect to caching server
 connectRedis();
 
+// socket connection
+const server = createServer(app);
+const io = new Server(server);
+
+io.on("connection", (socket) => {
+  console.log("a user connected");
+});
+
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/tasks", taskRoutes);
@@ -51,6 +62,21 @@ app.get("*", function (req, res, next) {
 // global error handler
 app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+// Create socket connection from the server to simulate a client
+const simulateClient = () => {
+  const clientSocket = socketClient(`http://localhost:${port}`);
+
+  clientSocket.on("connect", () => {
+    console.log("Simulated client connected to the server");
+  });
+
+  clientSocket.on("disconnect", () => {
+    console.log("Simulated client disconnected");
+  });
+};
+
+// Start the server and simulate the client
+server.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+  simulateClient(); // This will simulate a client connection to the socket server
 });
